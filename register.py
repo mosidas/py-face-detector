@@ -1,8 +1,15 @@
+import glob
+import os
 from detector import Detector
 import cv2
 
 
 def main():
+    # delete previous face images
+    filepaths = glob.glob(os.path.join("resources", "faces", "*"))
+    for filepath in filepaths:
+        os.remove(filepath)
+
     video = cv2.VideoCapture(0)
     detector = Detector()
     # loop 50 times

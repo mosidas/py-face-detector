@@ -17,27 +17,34 @@ class Detector:
             cv2.CascadeClassifier(
                 os.path.join("resources", "haarcascade_frontalface_alt_tree.xml")
             ),
+            # cv2.CascadeClassifier(
+            #     os.path.join("resources", "lbpcascade_frontalface.xml")
+            # ),
         ]
-        self.recognizer = cv2.face.LBPHFaceRecognizer_create()
+        radius = 1
+        neighbors = 2
+        grid_x = 8
+        grid_y = 8
+        self.recognizer = cv2.face.LBPHFaceRecognizer_create(
+            radius, neighbors, grid_x, grid_y
+        )
 
     def regiter(self, img):
-        # # register face
-        # targetImg = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-        # # noise reduction
+        # register face
+        targetImg = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         # targetImg = cv2.equalizeHist(targetImg)
-        # # gaussian blur
-        # targetImg = cv2.GaussianBlur(targetImg, (5, 5), 0)
+        # targetImg = cv2.GaussianBlur(targetImg, (3, 3), 0)
 
         faces = []
         for face_cascade in self.face_cascades:
-            faces = face_cascade.detectMultiScale(img, 1.05, 5, 0, (40, 40))
+            faces = face_cascade.detectMultiScale(img, 1.1, 5, 0, (50, 50))
             if len(faces) > 0:
                 break
 
         # save face rect(size:100x100, file path: ./resources/face-yymmdd-hhmmssfff.jpg)
         for x, y, w, h in faces:
             # get face
-            face = img[y : y + h, x : x + w]
+            face = targetImg[y : y + h, x : x + w]
             # resize
             face = cv2.resize(face, (100, 100))
             # save
@@ -59,10 +66,10 @@ class Detector:
         # noise reduction
         targetImg = cv2.equalizeHist(targetImg)
         # gaussian blur
-        targetImg = cv2.GaussianBlur(targetImg, (5, 5), 0)
+        # targetImg = cv2.GaussianBlur(targetImg, (5, 5), 0)
 
         for face_cascade in self.face_cascades:
-            faces = face_cascade.detectMultiScale(targetImg, 1.05, 5, 0, (40, 40))
+            faces = face_cascade.detectMultiScale(targetImg, 1.1, 6, 0, (40, 40))
             if len(faces) > 0:
                 for x, y, w, h in faces:
                     cv2.rectangle(img, (x, y), (x + w, y + h), (0, 255, 0), 2)
@@ -98,7 +105,8 @@ class Detector:
             # show
             cv2.putText(
                 img,
-                "Confidence: {}".format(confidence),
+                # 少数第二位まで表示
+                "Confidence: {}".format(round(confidence, 2)),
                 (x, y + h + 20),
                 cv2.FONT_HERSHEY_SIMPLEX,
                 1,
