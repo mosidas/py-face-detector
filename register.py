@@ -13,9 +13,9 @@ def main():
     video = cv2.VideoCapture(0)
     detector = Detector()
     # loop 50 times
-    for i in range(50):
+    for _ in range(50):
         # read frame
-        ret, frame = video.read()
+        _, frame = video.read()
         # register
         frame = detector.regiter(frame)
         # show

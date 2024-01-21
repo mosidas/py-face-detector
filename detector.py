@@ -31,9 +31,7 @@ class Detector:
 
     def regiter(self, img):
         # register face
-        targetImg = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-        # targetImg = cv2.equalizeHist(targetImg)
-        # targetImg = cv2.GaussianBlur(targetImg, (3, 3), 0)
+        target = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
         faces = []
         for face_cascade in self.face_cascades:
@@ -44,7 +42,7 @@ class Detector:
         # save face rect(size:100x100, file path: ./resources/face-yymmdd-hhmmssfff.jpg)
         for x, y, w, h in faces:
             # get face
-            face = targetImg[y : y + h, x : x + w]
+            face = target[y : y + h, x : x + w]
             # resize
             face = cv2.resize(face, (100, 100))
             # save
@@ -62,14 +60,14 @@ class Detector:
         return img
 
     def detect(self, img):
-        targetImg = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        target = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         # noise reduction
-        targetImg = cv2.equalizeHist(targetImg)
+        target = cv2.equalizeHist(target)
         # gaussian blur
         # targetImg = cv2.GaussianBlur(targetImg, (5, 5), 0)
 
         for face_cascade in self.face_cascades:
-            faces = face_cascade.detectMultiScale(targetImg, 1.1, 6, 0, (40, 40))
+            faces = face_cascade.detectMultiScale(target, 1.1, 6, 0, (40, 40))
             if len(faces) > 0:
                 for x, y, w, h in faces:
                     cv2.rectangle(img, (x, y), (x + w, y + h), (0, 255, 0), 2)
@@ -101,7 +99,7 @@ class Detector:
             # resize
             gray_face = cv2.resize(gray_face, (100, 100))
             # recognize
-            label, confidence = self.recognizer.predict(gray_face)
+            _, confidence = self.recognizer.predict(gray_face)
             # show
             cv2.putText(
                 img,
