@@ -9,7 +9,7 @@ def main():
     # loop
     while True:
         # read frame
-        ret, frame = video.read()
+        _, frame = video.read()
         # detect
         frame, faces = detector.detect(frame)
         # recognize
